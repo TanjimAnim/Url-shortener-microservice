@@ -10,4 +10,4 @@
 
 #### Usage:
 
-https://url-shortener-mic.glitch.me/api/shorturl/<shorturl>
+https://url-shortener-mic.glitch.me/api/shorturl/
