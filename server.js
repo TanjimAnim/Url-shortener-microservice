@@ -48,21 +48,36 @@ app.post("/api/shorturl/new", urlencodedParser, async (req, res) => {
   if (!validUrl.isWebUri(url)) {
     res.json({ error: "invalid url" });
   } else {
-    var newUrl = new ShortUrl({
-      originalUrl: url
-    });
-    try {
-      await newUrl.save();
-    } catch (err) {
-      console.log("error", err);
-      return res.json({
-        error: "failed to store in database"
-      });
+    try{
+      var existingUrl = await ShortUrl.findOne({ originalUrl: url });
+      
+    } catch(err){
+      console.log(err)
+      res.json("error occured")
     }
-    res.json({
-      original_url: newUrl.originalUrl,
-      short_url: newUrl.shortUrl
-    });
+    console.log(existingUrl)
+    if (existingUrl === null) {
+      var newUrl = new ShortUrl({
+        originalUrl: url
+      });
+      try {
+        await newUrl.save();
+      } catch (err) {
+        console.log("error", err);
+        return res.json({
+          error: "failed to store in database"
+        });
+      }
+      res.json({
+        original_url: newUrl.originalUrl,
+        short_url: newUrl.shortUrl
+      });
+    } else if (existingUrl.originalUrl === url) {
+      res.json({
+        "original Url": existingUrl.originalUrl,
+        "short Url": existingUrl.shortUrl
+      }); 
+    }
   }
 });
 
